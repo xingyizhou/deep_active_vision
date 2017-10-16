@@ -39,7 +39,8 @@ function loadData(dataFile)
 end
 
 -- scene names and ids
-local scene_names = {'Home_01_1','Home_01_2','Home_02_1','Home_03_1','Home_03_2','Home_04_1','Home_04_2','Home_05_1','Home_05_2','Home_06_1','Home_08_1','Home_14_1','Home_14_2','Office_01_1'}
+-- local scene_names = {'Home_01_1','Home_01_2','Home_02_1','Home_03_1','Home_03_2','Home_04_1','Home_04_2','Home_05_1','Home_05_2','Home_06_1','Home_08_1','Home_14_1','Home_14_2','Office_01_1'}
+local scene_names = {'Home_001_1','Home_001_2','Home_002_1','Home_003_1','Home_003_2','Home_004_1','Home_004_2','Home_005_1','Home_005_2','Home_006_1','Home_008_1','Home_014_1','Home_014_2','Office_001_1'}
 local scene_ids = {00011,00012,00021,00031,00032,00041,00042,00051,00052,00061,00081,00141,00142,10011}
 -- object categories used for training(not all object categories are used)
 --local old_object_filter = torch.Tensor({1,1,0,1,0,1,0,0,0,1,1,1,0,1,1,1,1,0,1,1,0,0,1,1,0,1,1,1,1,1,1,1})
@@ -116,7 +117,7 @@ function get_score(im, annon)
 	for j=1,n_object do
 		-- check if this object is in the image, and crop the bounding box
 		-- classify it, and save if top prediction is correct and its score
-		if annon[j][2] > 0 then
+		if annon[j][2] > 0 and (annon[j][3] > annon[j][1]) and (annon[j][4] > annon[j][2]) then
 			local obj_id = j
 			local x1 = torch.round(annon[obj_id][1])
 			local y1 = torch.round(annon[obj_id][2])
@@ -210,14 +211,15 @@ cnn:evaluate()
 
 for k=1,#scene_names do
 	print(string.format('processing scene:%d, %s',k, scene_names[k]))
-	local rgb_dir = paths.concat(opt.data_dir,scene_names[k],'rgb')
+	-- local rgb_dir = paths.concat(opt.data_dir,scene_names[k],'rgb')
+	local rgb_dir = paths.concat(opt.data_dir,scene_names[k],'jpg_rgb')
 	local image_list = paths.dir(rgb_dir)
 	-- remove '.' '..'
 	table.sort(image_list)
 	table.remove(image_list,1)
 	table.remove(image_list,1)
 	local n_image = #image_list
-
+  print('n_image = ', n_image)
 	-- getting annotations
 	local annotations = get_annotations(k, n_image)
 	-- getting moves (forward,backward,left,right,rotate clockwise,rotatecounter clockwise)

@@ -66,11 +66,12 @@ end
 -- test splits
 local scene_names
 if opt.split==1 then
-	scene_names = {'Home_01_1','Home_01_2','Home_08_1'}
+	scene_names = {'Home_001_1','Home_001_2','Home_008_1'}
 elseif opt.split==2 then
-	scene_names = {'Home_03_1','Home_03_2','Office_01_1'}
+	-- scene_names = {'Home_003_1','Home_003_2','Office_001_1'}
+	scene_names = {'Home_003_1','Home_003_2'}
 else
-	scene_names = {'Home_02_1','Home_14_1','Home_14_2'}
+	scene_names = {'Home_002_1','Home_014_1','Home_014_2'}
 end
 
 -- loading testing sets

@@ -5,7 +5,7 @@ require 'gnuplot'
 --local scene_names = {'Home_01_1','Home_01_2','Home_02_1','Home_03_1','Home_03_2','Home_04_1','Home_04_2','Home_05_1','Home_05_2','Home_06_1','Home_08_1','Home_14_1','Home_14_2','Office_01_1'}
 
 opt = lapp[[
-  --scene_name				(default 'Home_02_1')
+  --scene_name				(default 'Home_002_1')
 	-d, --debug					(default 0)
 ]]
 

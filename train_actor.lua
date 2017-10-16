@@ -80,11 +80,11 @@ actor_clones = model_utils.clone_many_times(actor, opt.T)
 -- train splits
 local scene_names
 if opt.split==1 then
-	scene_names = {'Home_02_1','Home_03_1','Home_03_2','Home_04_1','Home_04_2','Home_05_1','Home_05_2','Home_06_1','Home_14_1','Home_14_2','Office_01_1'}
+	scene_names = {'Home_002_1','Home_003_1','Home_003_2','Home_004_1','Home_004_2','Home_005_1','Home_005_2','Home_006_1','Home_014_1','Home_014_2'}--,'Office_001_1'}
 elseif opt.split==2 then
-	scene_names = {'Home_01_1','Home_01_2','Home_02_1','Home_04_1','Home_04_2','Home_05_1','Home_05_2','Home_06_1','Home_08_1','Home_14_1','Home_14_2'}
+	scene_names = {'Home_001_1','Home_001_2','Home_002_1','Home_004_1','Home_004_2','Home_005_1','Home_005_2','Home_006_1','Home_008_1','Home_014_1','Home_014_2'}
 else
-	scene_names = {'Home_01_1','Home_01_2','Home_03_1','Home_03_2','Home_04_1','Home_04_2','Home_05_1','Home_05_2','Home_06_1','Home_08_1','Office_01_1'}
+	scene_names = {'Home_001_1','Home_001_2','Home_003_1','Home_003_2','Home_004_1','Home_004_2','Home_005_1','Home_005_2','Home_006_1','Home_008_1'}--,'Office_001_1'}
 end
 
 -- loading trainsets
