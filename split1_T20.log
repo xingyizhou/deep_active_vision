@@ -1,0 +1,7 @@
+creating model	
+/home/zxy/torch/install/bin/luajit: test_sup.lua:48: attempt to call method 'cuda' (a nil value)
+stack traceback:
+	test_sup.lua:48: in main chunk
+	[C]: in function 'dofile'
+	.../zxy/torch/install/lib/luarocks/rocks/trepl/scm-1/bin/th:150: in main chunk
+	[C]: at 0x00405d50
