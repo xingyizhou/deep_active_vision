@@ -108,7 +108,7 @@ grad_params:zero()
 -- train splits
 local scene_names
 if opt.split==1 then
-	scene_names = {'Home_002_1'}--,'Home_003_1','Home_003_2','Home_004_1','Home_004_2','Home_005_1','Home_005_2','Home_006Convolution(3,64,7,7,2,2,3,3)_1','Home_014_1','Home_014_2'}--,'Office_001_1'}
+	scene_names = {'Home_002_1','Home_003_1','Home_003_2','Home_004_1','Home_004_2','Home_005_1','Home_005_2','Home_006_1','Home_014_1','Home_014_2'}--,'Office_001_1'}
 elseif opt.split==2 then
 	scene_names = {'Home_001_1','Home_001_2','Home_002_1','Home_004_1','Home_004_2','Home_005_1','Home_005_2','Home_006_1','Home_008_1','Home_014_1','Home_014_2'}
 else
