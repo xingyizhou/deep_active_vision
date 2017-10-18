@@ -153,7 +153,6 @@ for scene_id=1,n_scene do
 			-- actions[t] = action[1]
 
 			-- Greedy
-			local hc = (next_bb[2] + next_bb[4]) / 2
 			local wc = (next_bb[1] + next_bb[3]) / 2
 			local h1, h2 = height / 3, height * 2 / 3
 			local w1, w2 = width / 3, width * 2 / 3
@@ -163,9 +162,6 @@ for scene_id=1,n_scene do
    		end
    		if (wc > w2) then
    		  actions[t] = 6
-   		end
-   		if (hc > h2) then
-   		  actions[t] = 2
    		end
 
 			-- take the action
