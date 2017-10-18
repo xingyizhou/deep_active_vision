@@ -156,7 +156,7 @@ for scene_id=1,n_scene do
 			local wc = (next_bb[1] + next_bb[3]) / 2
 			local h1, h2 = height / 3, height * 2 / 3
 			local w1, w2 = width / 3, width * 2 / 3
-			action[t] = 1
+			actions[t] = 1
 			if (wc < w1) then
    		  actions[t] = 5
    		end

@@ -90,7 +90,7 @@ for scene_id=1,n_scene do
 		local input_im = datasets[scene_id].images[image_id]
 		input_im = transform(input_im)
 		local bb = datasets[scene_id].annotations[image_id][object_id][{{1,4}}]
-
+    bb = (bb * opt.scale):int()
 		local mask = torch.zeros(1, height, width)
     if bb[1] == 0 then
 		  bb[1] = 1
@@ -104,8 +104,9 @@ for scene_id=1,n_scene do
 		if bb[4] <= bb[2] then
 		  bb[4] = bb[2] + 1
 		end
+		
 		local w = bb[3]-bb[1]
-		local h = bb[4]-bb[2]  
+		local h = bb[4]-bb[2]
 		mask:sub(1, 1, bb[2] + 1, bb[4], bb[1] + 1, bb[3]):copy((torch.ones(1, h, w) * 1):clone())
 
 
@@ -133,34 +134,43 @@ for scene_id=1,n_scene do
 		results[idx][1][{{6,9}}] = bb
     
     local input = torch.Tensor(1, 4, height, width)
-    input[1].sub(1, 3):copy(input_im)
-    input[1].sub(4, 4):copy(mask)
+    input[1]:sub(1, 3):copy(input_im)
+    input[1]:sub(4, 4):copy(mask)
 		for t=1,opt.test_T do
 			cnn:evaluate()
 			input = input:cuda()
 			local output = cnn:forward(input)
-			local _, pred = output:topk(1)
-			local next_image_id
+			local _, pred = output[1]:max(1)
+			local next_image_id = image_id
 			
+			pred = pred[1]
+			-- print('pred', pred)
 			-- print('pred', pred, pred:float()[1][1])
 
-			if pred:float()[1][1] > 6.5 then
-			  -- print('STOP')
-			  next_image_id = image_id
+			if pred > 6.5 then
+			  actions[t] = 1
 			else
-			  actions[t] = pred:float()
-			  next_image_id = next_move_avail[actions[t]]
+			  actions[t] = pred
 			end
 			-- random baseline
 			--actions[t] = torch.random(6)
 			
 			-- forward baseline
 			--actions[t] = 1
-			 
+			while next_move_avail[actions[t]] == 0 do
+			  actions[t] = torch.random(6)
+			end
+			next_image_id = next_move_avail[actions[t]]
+			
+			if t == 1 then
+			  next_image_id = image_id
+			end
+			
 			if next_image_id > 0 then
 				next_im = datasets[scene_id].images[next_image_id]
 				next_im = transform(next_im)
 				next_bb = datasets[scene_id].annotations[next_image_id][object_id][{{1,4}}]
+				next_bb = (next_bb * opt.scale):int()
 
 				next_mask = torch.zeros(1, height, width)
 		    if next_bb[1] == 0 then
@@ -178,9 +188,6 @@ for scene_id=1,n_scene do
 				local w = next_bb[3]-next_bb[1]
 				local h = next_bb[4]-next_bb[2]  
 				next_mask:sub(1, 1, next_bb[2] + 1, next_bb[4], next_bb[1] + 1, next_bb[3]):copy((torch.ones(1, h, w) * 1):clone())
-
-
-
 				next_move_avail = datasets[scene_id].moves[next_image_id]  
 				correct = datasets[scene_id].annotations[next_image_id][object_id][5]
 				score = datasets[scene_id].annotations[next_image_id][object_id][6]
@@ -203,8 +210,8 @@ for scene_id=1,n_scene do
 			end
 			-- prepare data for next time step
 			if t < opt.test_T then
-				input[1].sub(1, 3):copy(next_im)
-				input[1].sub(4, 4):copy(next_mask)
+				input[1]:sub(1, 3):copy(next_im)
+				input[1]:sub(4, 4):copy(next_mask)
 
 				local w = next_bb[3]-next_bb[1]
 				local h = next_bb[4]-next_bb[2]
