@@ -43,12 +43,15 @@ cnn:add(nn.Linear(512, 7))
 local criterion = nn.CrossEntropyCriterion()
 criterion = criterion:cuda()
 
-local config = {
-	learningRate = opt.lr,
-	beta1 = 0.9,
-	beta2 = 0.999,
-}
+-- local config = {
+-- 	learningRate = opt.lr,
+-- 	beta1 = 0.9,
+-- 	beta2 = 0.999,
+-- }
 
+local config = {
+  learningRate = opt.lr
+}
 
 
 local state = {}
@@ -166,7 +169,8 @@ for e=1,opt.max_epoch do
 			collectgarbage()
 			return err, grad_params
 		end
-		optim.adam(feval, params, config)
+		-- optim.adam(feval, params, config)
+		optim.sgd(feval, params, config)
 
 		grad_params:zero()
 		timer:stop()
@@ -182,7 +186,7 @@ for e=1,opt.max_epoch do
 		snapshot.state = state
 		snapshot.config = config
 		snapshot.reward_list = torch.Tensor(reward_list)
-		torch.save(string.format('./snapshots/SupImg_%s_epoch%d.t7', model_name, e),snapshot)
+		torch.save(string.format('./snapshots/SGDSupImg_%s_epoch%d.t7', model_name, e),snapshot)
 	end
 end
 

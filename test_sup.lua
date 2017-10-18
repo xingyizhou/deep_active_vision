@@ -51,7 +51,7 @@ end
 -- test splits
 local scene_names
 if opt.split==1 then
-	scene_names = {'Home_001_1','Home_001_2','Home_008_1'}
+	scene_names = {'Home_001_1', 'Home_001_2','Home_008_1'}
 elseif opt.split==2 then
 	-- scene_names = {'Home_003_1','Home_003_2','Office_001_1'}
 	scene_names = {'Home_003_1','Home_003_2'}
@@ -97,9 +97,12 @@ for scene_id=1,n_scene do
 		local w = bb[3]-bb[1]
 		local h = bb[4]-bb[2]
 
+		local next_im = input_im
+		local next_bb = bb
 		local move_avail = datasets[scene_id].moves[image_id]  
     local next_move_avail = move_avail
-
+    local actions = torch.Tensor(opt.test_T)
+    
 		print(string.format('Episodes %d: object_id %d: ', idx, object_id))
 		print(string.format('image_id: %d, correct: %d, score: %.4f', image_id, init_correct, init_score))
 		results[idx][{{},{1}}] = object_id
@@ -109,17 +112,22 @@ for scene_id=1,n_scene do
 		results[idx][1][5] = init_score
 		results[idx][1][{{6,9}}] = bb
     
+    local input = torch.Tensor(1, 3, height, width)
+    input[1]:copy(input_im)
 		for t=1,opt.test_T do
 			cnn:evaluate()
-			local input = torch.Tensor(1, 3, height, width):cuda()
+			input = input:cuda()
 			local output = cnn:forward(input)
 			local _, pred = output:topk(1)
 			local next_image_id
 			
-			if pred == 7 then
+			-- print('pred', pred, pred:float()[1][1])
+
+			if pred:float()[1][1] > 6.5 then
+			  -- print('STOP')
 			  next_image_id = image_id
 			else
-			  actions[t] = pred
+			  actions[t] = pred:float()
 			  next_image_id = next_move_avail[actions[t]]
 			end
 			-- random baseline
@@ -154,14 +162,9 @@ for scene_id=1,n_scene do
 			end
 			-- prepare data for next time step
 			if t < opt.test_T then
-				im_global_batch[t+1][1]:copy(next_im)
-				move_batch[t+1][1]:copy(next_move_avail:gt(0))
+				input[1]:copy(next_im)
 				local w = next_bb[3]-next_bb[1]
 				local h = next_bb[4]-next_bb[2]
-				bb_batch[t+1][1][1] = (next_bb[1]+w/2)/width
-				bb_batch[t+1][1][2] = (next_bb[2]+h/2)/height
-				bb_batch[t+1][1][3] = w/width
-				bb_batch[t+1][1][4] = h/height
 			end
 		end
 
